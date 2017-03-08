@@ -22,6 +22,7 @@ namespace Lab1._2
     public partial class MainWindow : Window
     {
         Creator drawer;
+        System.Windows.Media.Brush color = System.Windows.Media.Brushes.Black;
         public MainWindow()
         {
             InitializeComponent();
@@ -39,7 +40,7 @@ namespace Lab1._2
                 drawer.addPoint(e.GetPosition(canvas));
                 if (drawer.isEnoughPoints)
                 {
-                    myFigure shape = drawer.Create(System.Windows.Media.Brushes.Aqua);
+                    myFigure shape = drawer.Create(color);
                     shape.draw(canvas);
                     drawer.isEnoughPoints = true;
                 }
@@ -49,6 +50,12 @@ namespace Lab1._2
         private void btnCircle_Click(object sender, RoutedEventArgs e)
         {
             drawer = new CircleCreator();
+        }
+
+        private void OnNewColorSelected(object sender, SelectionChangedEventArgs e)
+        {
+            Color newColor = (Color)colorsListBox.SelectedItem;
+            color = new SolidColorBrush(newColor);
         }
     }
 
