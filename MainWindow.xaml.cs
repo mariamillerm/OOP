@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Lab1._2
+namespace lab1._2
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -56,6 +56,26 @@ namespace Lab1._2
         {
             Color newColor = (Color)colorsListBox.SelectedItem;
             color = new SolidColorBrush(newColor);
+        }
+
+        private void btnEllipse_Click(object sender, RoutedEventArgs e)
+        {
+            drawer = new EllipseCreator();
+        }
+
+        private void btnSquare_Click(object sender, RoutedEventArgs e)
+        {
+            drawer = new SquareCreator();
+        }
+
+        private void btnRectanle_Click(object sender, RoutedEventArgs e)
+        {
+            drawer = new RectangleCreator();
+        }
+
+        private void btnTriangle_Click(object sender, RoutedEventArgs e)
+        {
+            drawer = new TriangleCreator();
         }
     }
 
@@ -110,6 +130,39 @@ namespace Lab1._2
         }
     }
 
+    class EllipseCreator : CircleCreator
+    {
+        public override myFigure Create(Brush color)
+        {
+            int x1 = Convert.ToInt32(points.ElementAt(0).X);
+            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
+            int x2 = Convert.ToInt32(points.ElementAt(1).X);
+            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
+            int width, height;
+            if (y2 >= y1 && x2 >= x1) {
+                width = x2 - x1;
+                height = y2 - y1;
+                return new myEllipse(x1, y1, height, width, color);
+            }
+            else if (y1 >= y2 && x1 >= x2) {
+                width = x1 - x2;
+                height = y1 - y2;
+                return new myEllipse(x2, y2, height, width, color);
+            }
+            else if (x2 >= x1 && y1 >= y2)
+            {
+                width = x2 - x1;
+                height = y1 - y2;
+                return new myEllipse(x1, y2, height, width, color);
+            }
+            else {
+                width = x1 - x2;
+                height = y2 - y1;
+                return new myEllipse(x2, y1, height, width, color);
+            }
+        }
+    }
+
     class LineCreator : Creator
     {
         protected List<Point> points = new List<Point>();
@@ -137,6 +190,128 @@ namespace Lab1._2
         public override myFigure Create(System.Windows.Media.Brush color)
         {
             return new myLine(Convert.ToInt32(points.ElementAt(0).X), Convert.ToInt32(points.ElementAt(0).Y), Convert.ToInt32(points.ElementAt(1).X), Convert.ToInt32(points.ElementAt(1).Y), color);  
+        }
+    }
+
+    class SquareCreator : Creator
+    {
+        public List<Point> points = new List<Point>();
+        public override void addPoint(Point point)
+        {
+            points.Add(point);
+        }
+        public override bool isEnoughPoints
+        {
+            get
+            {
+                if (points.Count == 2)
+                    return true;
+                else
+                    return false;
+            }
+            set
+            {
+                if (value)
+                {
+                    points.Clear();
+                }
+            }
+        }
+
+        public override myFigure Create(Brush color)
+        {
+            int x1 = Convert.ToInt32(points.ElementAt(0).X);
+            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
+            int x2 = Convert.ToInt32(points.ElementAt(1).X);
+            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
+            int width;
+            if (y2 >= y1 && x2 >= x1)
+            {
+                width = x2 - x1;
+                return new mySquare(x1, y1, width, color);
+            }
+            else if (y1 >= y2 && x1 >= x2)
+            {
+                width = x1 - x2;
+                return new mySquare(x2, y2, width, color);
+            }
+            else if (x2 >= x1 && y1 >= y2)
+            {
+                width = x2 - x1;
+                return new mySquare(x1, y2, width, color);
+            }
+            else
+            {
+                width = x1 - x2;
+                return new mySquare(x2, y1, width, color);
+            }    
+        }
+    }
+
+    class RectangleCreator : SquareCreator
+    {
+        public override myFigure Create(Brush color)
+        {
+            int x1 = Convert.ToInt32(points.ElementAt(0).X);
+            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
+            int x2 = Convert.ToInt32(points.ElementAt(1).X);
+            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
+            int width, height;
+            if (y2 >= y1 && x2 >= x1)
+            {
+                width = x2 - x1;
+                height = y2 - y1;
+                return new myRectangle(x1, y1, height, width, color);
+            }
+            else if (y1 >= y2 && x1 >= x2)
+            {
+                width = x1 - x2;
+                height = y1 - y2;
+                return new myRectangle(x2, y2, height, width, color);
+            }
+            else if (x2 >= x1 && y1 >= y2)
+            {
+                width = x2 - x1;
+                height = y1 - y2;
+                return new myRectangle(x1, y2, height, width, color);
+            }
+            else
+            {
+                width = x1 - x2;
+                height = y2 - y1;
+                return new myRectangle(x2, y1, height, width, color);
+            }    
+        }
+    }
+
+    class TriangleCreator : Creator
+    {
+        public List<Point> points = new List<Point>();
+        public override void addPoint(Point point)
+        {
+            points.Add(point);
+        }
+        public override bool isEnoughPoints
+        {
+            get
+            {
+                if (points.Count == 3)
+                    return true;
+                else
+                    return false;
+            }
+            set
+            {
+                if (value)
+                {
+                    points.Clear();
+                }
+            }
+        }
+
+        public override myFigure Create(Brush color)
+        {
+            return new myTriangle(Convert.ToInt32(points.ElementAt(0).X), Convert.ToInt32(points.ElementAt(0).Y), Convert.ToInt32(points.ElementAt(1).X), Convert.ToInt32(points.ElementAt(1).Y), Convert.ToInt32(points.ElementAt(2).X), Convert.ToInt32(points.ElementAt(2).Y), color);
         }
     }
 }
