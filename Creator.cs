@@ -18,25 +18,13 @@ namespace lab1._2
 {
     abstract class Creator
     {
-        abstract public myFigure Create(System.Windows.Media.Brush color);
+        abstract public myFigure Create(System.Windows.Media.Color color);
         public abstract void addPoint(Point point);
         public abstract bool isEnoughPoints { get; set; }
     }
 
     class CircleCreator : Creator
     {
-        public int GetDistanse(Point p1, Point p2)
-        {
-            double x2d = Convert.ToDouble(p2.X.ToString());
-            double y2d = Convert.ToDouble(p2.Y.ToString());
-            double y1d = Convert.ToDouble(p1.Y.ToString());
-            double x1d = Convert.ToDouble(p1.X.ToString());
-
-            double tmp = Math.Sqrt(Math.Pow(x2d - x1d, 2) + Math.Pow(y2d - y1d, 2));
-
-            return (int)tmp;
-        }
-
         public List<Point> points = new List<Point>();
         public override void addPoint(Point point)
         {
@@ -60,46 +48,17 @@ namespace lab1._2
             }
         }
 
-        public override myFigure Create(System.Windows.Media.Brush color)
+        public override myFigure Create(System.Windows.Media.Color color)
         {
-            int rad = GetDistanse(points.ElementAt(0), points.ElementAt(1));
-            return new myCircle(Convert.ToInt32(points.ElementAt(0).X), Convert.ToInt32(points.ElementAt(0).Y), rad, color);
+            return new myCircle(points.ElementAt(0), points.ElementAt(1), color);
         }
     }
 
     class EllipseCreator : CircleCreator
     {
-        public override myFigure Create(Brush color)
+        public override myFigure Create(Color color)
         {
-            int x1 = Convert.ToInt32(points.ElementAt(0).X);
-            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
-            int x2 = Convert.ToInt32(points.ElementAt(1).X);
-            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
-            int width, height;
-            if (y2 >= y1 && x2 >= x1)
-            {
-                width = x2 - x1;
-                height = y2 - y1;
-                return new myEllipse(x1, y1, height, width, color);
-            }
-            else if (y1 >= y2 && x1 >= x2)
-            {
-                width = x1 - x2;
-                height = y1 - y2;
-                return new myEllipse(x2, y2, height, width, color);
-            }
-            else if (x2 >= x1 && y1 >= y2)
-            {
-                width = x2 - x1;
-                height = y1 - y2;
-                return new myEllipse(x1, y2, height, width, color);
-            }
-            else
-            {
-                width = x1 - x2;
-                height = y2 - y1;
-                return new myEllipse(x2, y1, height, width, color);
-            }
+            return new myEllipse(points.ElementAt(0), points.ElementAt(1), color);
         }
     }
 
@@ -128,9 +87,9 @@ namespace lab1._2
             points.Add(point);
         }
 
-        public override myFigure Create(System.Windows.Media.Brush color)
+        public override myFigure Create(System.Windows.Media.Color color)
         {
-            return new myLine(Convert.ToInt32(points.ElementAt(0).X), Convert.ToInt32(points.ElementAt(0).Y), Convert.ToInt32(points.ElementAt(1).X), Convert.ToInt32(points.ElementAt(1).Y), color);
+            return new myLine(points.ElementAt(0), points.ElementAt(1), color);
         }
     }
 
@@ -159,69 +118,17 @@ namespace lab1._2
             }
         }
 
-        public override myFigure Create(Brush color)
+        public override myFigure Create(Color color)
         {
-            int x1 = Convert.ToInt32(points.ElementAt(0).X);
-            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
-            int x2 = Convert.ToInt32(points.ElementAt(1).X);
-            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
-            int width;
-            if (y2 >= y1 && x2 >= x1)
-            {
-                width = x2 - x1;
-                return new mySquare(x1, y1, width, color);
-            }
-            else if (y1 >= y2 && x1 >= x2)
-            {
-                width = x1 - x2;
-                return new mySquare(x2, y2, width, color);
-            }
-            else if (x2 >= x1 && y1 >= y2)
-            {
-                width = x2 - x1;
-                return new mySquare(x1, y2, width, color);
-            }
-            else
-            {
-                width = x1 - x2;
-                return new mySquare(x2, y1, width, color);
-            }
+            return new mySquare(points.ElementAt(0), points.ElementAt(1), color);
         }
     }
 
     class RectangleCreator : SquareCreator
     {
-        public override myFigure Create(Brush color)
+        public override myFigure Create(Color color)
         {
-            int x1 = Convert.ToInt32(points.ElementAt(0).X);
-            int y1 = Convert.ToInt32(points.ElementAt(0).Y);
-            int x2 = Convert.ToInt32(points.ElementAt(1).X);
-            int y2 = Convert.ToInt32(points.ElementAt(1).Y);
-            int width, height;
-            if (y2 >= y1 && x2 >= x1)
-            {
-                width = x2 - x1;
-                height = y2 - y1;
-                return new myRectangle(x1, y1, height, width, color);
-            }
-            else if (y1 >= y2 && x1 >= x2)
-            {
-                width = x1 - x2;
-                height = y1 - y2;
-                return new myRectangle(x2, y2, height, width, color);
-            }
-            else if (x2 >= x1 && y1 >= y2)
-            {
-                width = x2 - x1;
-                height = y1 - y2;
-                return new myRectangle(x1, y2, height, width, color);
-            }
-            else
-            {
-                width = x1 - x2;
-                height = y2 - y1;
-                return new myRectangle(x2, y1, height, width, color);
-            }
+            return new myRectangle(points.ElementAt(0), points.ElementAt(1), color);
         }
     }
 
@@ -250,9 +157,9 @@ namespace lab1._2
             }
         }
 
-        public override myFigure Create(Brush color)
+        public override myFigure Create(Color color)
         {
-            return new myTriangle(Convert.ToInt32(points.ElementAt(0).X), Convert.ToInt32(points.ElementAt(0).Y), Convert.ToInt32(points.ElementAt(1).X), Convert.ToInt32(points.ElementAt(1).Y), Convert.ToInt32(points.ElementAt(2).X), Convert.ToInt32(points.ElementAt(2).Y), color);
+            return new myTriangle(points.ElementAt(0), points.ElementAt(1), points.ElementAt(2), color);
         }
     }
 }
