@@ -48,6 +48,7 @@ namespace lab1._2
             if (selectedFigure != null) {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
         }
 
@@ -62,8 +63,8 @@ namespace lab1._2
             {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
-            //selectedFigure = null;
         }
 
         private void OnNewColorSelected(object sender, SelectionChangedEventArgs e)
@@ -79,12 +80,6 @@ namespace lab1._2
                     var index = list.IndexOf(selected);
                     editFigure.Fill(newColor, canvas, index);
                     canvas.Children.RemoveAt(index);
-                    //int tmp = lbShapes.SelectedIndex;
-                    //selectedFigure = selectedFigure.Fill(new SolidColorBrush(newColor), canvas, tmp);
-                    //canvas.Children.RemoveAt(tmp);
-                    //list.AddAt(tmp + 1, selectedFigure, lbShapes);
-                    //list.RemoveAt(tmp, lbShapes);
-                    //lbShapes.SelectedItem = lbShapes.Items.GetItemAt(tmp);
                 }
                 else {
                     System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);
@@ -107,8 +102,8 @@ namespace lab1._2
             {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
-            //selectedFigure = null;
         }
 
         private void btnSquare_Click(object sender, RoutedEventArgs e)
@@ -122,8 +117,8 @@ namespace lab1._2
             {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
-            //selectedFigure = null;
         }
 
         private void btnRectanle_Click(object sender, RoutedEventArgs e)
@@ -137,8 +132,8 @@ namespace lab1._2
             {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
-            //selectedFigure = null;
         }
 
         private void btnTriangle_Click(object sender, RoutedEventArgs e)
@@ -152,8 +147,8 @@ namespace lab1._2
             {
                 canvas.Children.RemoveAt(canvas.Children.Count - 1);
                 selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
             }
-            //selectedFigure = null;
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
@@ -248,27 +243,31 @@ namespace lab1._2
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                if ((selectedFigure != null) && (selectedFigure is IEditable) && (selectedFigure is ISelectable))
+                if (selectedFigure != null) 
                 {
-                    IEditable editFigure = (IEditable)selectedFigure;
-                    ISelectable selFigure = (ISelectable)selectedFigure;
-                    if (editFigure.InRect(e.GetPosition(this)))
+                    if ((selectedFigure is IEditable) && (selectedFigure is ISelectable))
                     {
-                        int tmp = lbShapes.SelectedIndex;
-                        canvas.Children.RemoveAt(canvas.Children.Count - 1);//рамка
-                        selectedFigure = editFigure.Redraw(e.GetPosition(this), canvas, tmp);
-                        canvas.Children.RemoveAt(tmp);
-                        selFigure.Frame(canvas);
+                        IEditable editFigure = (IEditable)selectedFigure;
+                        ISelectable selFigure = (ISelectable)selectedFigure;
+                        if (editFigure.InRect(e.GetPosition(this)))
+                        {
+                            int tmp = lbShapes.SelectedIndex;
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);//рамка
+                            selectedFigure = editFigure.Redraw(e.GetPosition(this), canvas, tmp);
+                            canvas.Children.RemoveAt(tmp);
+                            selFigure.Frame(canvas);
+                        }
+                        else
+                        {
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                            selectedFigure = null;
+                            lbShapes.SelectedIndex = -1;
+                        }
                     }
                     else
                     {
-                        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                        selectedFigure = null;
-                        lbShapes.SelectedIndex = -1;
+                        System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);
                     }
-                }
-                else {
-                    System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);          
                 }
                 return;
             }
@@ -297,27 +296,43 @@ namespace lab1._2
 
         private void SaveFile_Click(object sender, RoutedEventArgs e)
         {
-            myFigure[] arr = list.ToList();
-            using (FileStream fs = new FileStream("figures.json", FileMode.OpenOrCreate))
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+            saveFileDialog1.Filter = "JSON File|*.json";
+            saveFileDialog1.DefaultExt = "json";
+            saveFileDialog1.Title = "Save the Picture";
+            saveFileDialog1.ShowDialog();
+
+            if (saveFileDialog1.FileName != "")
             {
-                jsonFormatter.WriteObject(fs, arr);
+                myFigure[] arr = list.ToList();
+                using (FileStream fs = new FileStream(saveFileDialog1.FileName, FileMode.Create))
+                {
+                    jsonFormatter.WriteObject(fs, arr);
+                }
             }
         }
 
         private void LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
-            using (FileStream fs = new FileStream("figures.json", FileMode.OpenOrCreate))
-            {
-                myFigure[] arr = (myFigure[])jsonFormatter.ReadObject(fs);
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "JSON files|*.json";
 
-                canvas.Children.Clear();
-                list.DeleteAllFigures(lbShapes);
-                int i = 0;
-                foreach (myFigure figureToDraw in arr)
+            if (openFileDialog1.ShowDialog() == true)
+            {
+                using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open))
                 {
-                    figureToDraw.draw(canvas, i);
-                    list.AddFigureInList(figureToDraw, lbShapes);
-                    i++;
+                    myFigure[] arr = (myFigure[])jsonFormatter.ReadObject(fs);
+
+                    canvas.Children.Clear();
+                    list.DeleteAllFigures(lbShapes);
+                    selectedFigure = null;
+                    int i = 0;
+                    foreach (myFigure figureToDraw in arr)
+                    {
+                        figureToDraw.draw(canvas, i);
+                        list.AddFigureInList(figureToDraw, lbShapes);
+                        i++;
+                    }
                 }
             }
         }

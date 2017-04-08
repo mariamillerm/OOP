@@ -44,7 +44,6 @@ namespace lab1._2.Shapes
             circle.Fill = brush;
             circle.Width = this.rad * 2;
             circle.Height = this.rad * 2;
-            //canvas.Children.Add(circle);
             canvas.Children.Insert(index, circle);
             Canvas.SetLeft(circle, this.p1.X - this.rad);
             Canvas.SetTop(circle, this.p1.Y - this.rad);

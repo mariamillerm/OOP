@@ -9,7 +9,7 @@ namespace lab1._2.Shapes
 {
     interface ISelectable
     {
-        //bool isSelected { get; set; }
+      
         void Frame(Canvas canvas);
     }
 }
