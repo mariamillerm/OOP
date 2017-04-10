@@ -186,6 +186,11 @@ namespace lab1._2
         {
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.Z)
             {
+                if (selectedFigure != null)
+                {
+                    canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                    selectedFigure = null;
+                }
                 list.DeleteLastFigure(lbShapes);
                 if (canvas.Children.Count - 1 >= 0)
                     canvas.Children.RemoveAt(canvas.Children.Count - 1);
@@ -194,6 +199,7 @@ namespace lab1._2
             {
                 list.DeleteAllFigures(lbShapes);
                 canvas.Children.Clear();
+                selectedFigure = null;
             }
         }
 
