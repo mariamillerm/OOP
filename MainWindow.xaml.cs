@@ -83,6 +83,7 @@ namespace lab1._2
                 }
                 else {
                     System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);
+                    selectedFigure = null;
                 }
             }
             else
@@ -177,6 +178,7 @@ namespace lab1._2
                     }
                     else {
                         System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);
+                        selectedFigure = null;
                     }
                 }
             }
@@ -211,7 +213,11 @@ namespace lab1._2
                     canvas.Children.RemoveAt(canvas.Children.Count - 1);    
                 }
                 selectedFigure = (myFigure)list.GetElemAt((int)lbShapes.SelectedIndex);
-
+                if (!(selectedFigure is ISelectable) || !(selectedFigure is IEditable))
+                {
+                    selectedFigure = null;
+                    return;
+                }
                 for (int i = 0; i< list.count; i++)
                 {
                     list[i].isSelected = (i == lbShapes.SelectedIndex);
@@ -273,6 +279,7 @@ namespace lab1._2
                     else
                     {
                         System.Windows.MessageBox.Show("Данная фигура не реализует интерфейс IEditable", "Error", MessageBoxButton.OK);
+                        selectedFigure = null;
                     }
                 }
                 return;
