@@ -166,14 +166,11 @@ namespace lab1._2
                         {
                             IEditable editFigure = (IEditable)selectedFigure;
                             ISelectable selFigure = (ISelectable)selectedFigure;
-                            /*if (editFigure.InRect(e.GetPosition(this))) 
-                            {*/
-                                int tmp = lbShapes.SelectedIndex;
-                                canvas.Children.RemoveAt(canvas.Children.Count - 1);//рамка
-                                selectedFigure = editFigure.Redraw(e.GetPosition(this), canvas, tmp);
-                                canvas.Children.RemoveAt(tmp);
-                                selFigure.Frame(canvas); 
-                            //}
+                            int tmp = lbShapes.SelectedIndex;
+                            canvas.Children.RemoveAt(canvas.Children.Count - 1);//рамка
+                            selectedFigure = editFigure.Redraw(e.GetPosition(this), canvas, tmp);
+                            canvas.Children.RemoveAt(tmp);
+                            selFigure.Frame(canvas); 
                         }
                     }
                     else {
@@ -334,8 +331,16 @@ namespace lab1._2
             {
                 using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open))
                 {
-                    myFigure[] arr = (myFigure[])jsonFormatter.ReadObject(fs);
-
+                    myFigure[] arr;
+                    try
+                    {
+                        arr = (myFigure[])jsonFormatter.ReadObject(fs);
+                    }
+                    catch (Exception ex) {
+                        System.Windows.MessageBox.Show("Файл неправильный!", "Error", MessageBoxButton.OK);
+                        return;
+                    }
+                    
                     canvas.Children.Clear();
                     list.DeleteAllFigures(lbShapes);
                     selectedFigure = null;
