@@ -13,11 +13,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using InnerInterface;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
 using Microsoft.Win32;
 using System.IO;
+using System.Windows.Controls.Primitives;
+using System.Reflection;
 
 namespace lab1._2
 {
@@ -27,7 +29,11 @@ namespace lab1._2
     public partial class MainWindow : Window
     {
         Creator drawer;
+        private List<Creator> Creators { get; set; }
         myFigure selectedFigure;
+        private RenderTargetBitmap PrimaryBitmap { get; set; }
+        private RenderTargetBitmap SecondaryBitmap { get; set; }
+        private int SelectedShapeId { get; set; }
         myFigure shape;
         System.Windows.Media.Color color = System.Windows.Media.Colors.Black;
         FigureList list = FigureList.GetInstance();
@@ -38,34 +44,34 @@ namespace lab1._2
             InitializeComponent();
         }
 
-        private void btnLine_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new LineCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null) {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnLine_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new LineCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null) {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
-        private void btnCircle_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new CircleCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null)
-            {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnCircle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new CircleCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null)
+        //    {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
         private void OnNewColorSelected(object sender, SelectionChangedEventArgs e)
         {
@@ -92,65 +98,65 @@ namespace lab1._2
             }
         }
 
-        private void btnEllipse_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new EllipseCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null)
-            {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnEllipse_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new EllipseCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null)
+        //    {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
-        private void btnSquare_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new SquareCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null)
-            {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnSquare_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new SquareCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null)
+        //    {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
-        private void btnRectanle_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new RectangleCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null)
-            {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnRectanle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new RectangleCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null)
+        //    {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
-        private void btnTriangle_Click(object sender, RoutedEventArgs e)
-        {
-            drawer = new TriangleCreator();
-            for (int i = 0; i < list.count; i++)
-            {
-                list[i].isSelected = false;
-            }
-            if (selectedFigure != null)
-            {
-                canvas.Children.RemoveAt(canvas.Children.Count - 1);
-                selectedFigure = null;
-                lbShapes.SelectedIndex = -1;
-            }
-        }
+        //private void btnTriangle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    drawer = new TriangleCreator();
+        //    for (int i = 0; i < list.count; i++)
+        //    {
+        //        list[i].isSelected = false;
+        //    }
+        //    if (selectedFigure != null)
+        //    {
+        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
+        //        selectedFigure = null;
+        //        lbShapes.SelectedIndex = -1;
+        //    }
+        //}
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -286,7 +292,8 @@ namespace lab1._2
                 drawer.addPoint(e.GetPosition(canvas));
                 if (drawer.isEnoughPoints)
                 {
-                    shape = drawer.Create(color);
+                    //shape = drawer.Create(color);
+                    shape = Creators[SelectedShapeId].Create(color);
                     shape.draw(canvas, canvas.Children.Count);
                     list.AddFigureInList(shape, lbShapes);
                     drawer.isEnoughPoints = true;
@@ -355,11 +362,61 @@ namespace lab1._2
             }
         }
 
+        private void Window_Loaded_1(object sender, RoutedEventArgs e)
+        {
+            Creators = new List<Creator>() {
+                new LineCreator(), 
+                new EllipseCreator(), 
+                new RectangleCreator(),
+                new SquareCreator(),
+                new TriangleCreator()
+            };
+
+            PrimaryBitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight, 96, 96, PixelFormats.Default);
+
+            FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+            fileSystemWatcher.Created += (x, y) =>
+            {
+                Type type = Assembly.LoadFile(y.FullPath).GetExportedTypes()[0];
+                Creators.Add(Activator.CreateInstance(type) as Creator);
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    System.Windows.Shapes.Path path = new System.Windows.Shapes.Path()
+                    {
+                        Stretch = Stretch.Uniform,
+                        Stroke = Brushes.Black,
+                        StrokeThickness = 2,
+                        Data = Geometry.Parse(type.GetField("PathData").GetValue(null) as string)
+                    };
+                    ToggleButton toggleButton = new ToggleButton()
+                    {
+                        Width = 32,
+                        Height = 32,
+                        Padding = new Thickness(3),
+                        Margin = new Thickness(10, 0, 0, 0),
+                        Content = path
+                    };
+                    toggleButton.Click += Button_Click;
+                    ToolBar.Children.Add(toggleButton);
+                }));
+            };
+            fileSystemWatcher.EnableRaisingEvents = true;
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleButton selectedToggleButton = sender as ToggleButton;
+            SelectedShapeId = ToolBar.Children.IndexOf(selectedToggleButton);
+            foreach (UIElement uiElement in ToolBar.Children)
+            {
+                (uiElement as ToggleButton).IsChecked = uiElement == selectedToggleButton ? true : false;
+            }
+        }
+
     }
 
     [DataContract]
-    [KnownType(typeof(myFigure))]
-    [KnownType(typeof(myCircle))]
     [KnownType(typeof(myEllipse))]
     [KnownType(typeof(myLine))]
     [KnownType(typeof(myRectangle))]
