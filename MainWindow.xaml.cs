@@ -1,5 +1,4 @@
-﻿using lab1._2.Shapes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.IO;
 using System.Windows.Shapes;
 using InnerInterface;
 using System.Runtime.Serialization.Json;
@@ -31,47 +31,20 @@ namespace lab1._2
         Creator drawer;
         private List<Creator> Creators { get; set; }
         myFigure selectedFigure;
+        static public List<Type> LoadedTypes { get; set; }
         private RenderTargetBitmap PrimaryBitmap { get; set; }
         private RenderTargetBitmap SecondaryBitmap { get; set; }
         private int SelectedShapeId { get; set; }
         myFigure shape;
         System.Windows.Media.Color color = System.Windows.Media.Colors.Black;
         FigureList list = FigureList.GetInstance();
-        DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(myFigure[]));
+        //DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(myFigure[]), LoadedTypes);
 
         public MainWindow()
         {
             InitializeComponent();
+            LoadedTypes = new List<Type>();
         }
-
-        //private void btnLine_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new LineCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null) {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
-
-        //private void btnCircle_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new CircleCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null)
-        //    {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
 
         private void OnNewColorSelected(object sender, SelectionChangedEventArgs e)
         {
@@ -98,65 +71,6 @@ namespace lab1._2
             }
         }
 
-        //private void btnEllipse_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new EllipseCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null)
-        //    {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
-
-        //private void btnSquare_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new SquareCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null)
-        //    {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
-
-        //private void btnRectanle_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new RectangleCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null)
-        //    {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
-
-        //private void btnTriangle_Click(object sender, RoutedEventArgs e)
-        //{
-        //    drawer = new TriangleCreator();
-        //    for (int i = 0; i < list.count; i++)
-        //    {
-        //        list[i].isSelected = false;
-        //    }
-        //    if (selectedFigure != null)
-        //    {
-        //        canvas.Children.RemoveAt(canvas.Children.Count - 1);
-        //        selectedFigure = null;
-        //        lbShapes.SelectedIndex = -1;
-        //    }
-        //}
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -318,6 +232,7 @@ namespace lab1._2
             saveFileDialog1.DefaultExt = "json";
             saveFileDialog1.Title = "Save the Picture";
             saveFileDialog1.ShowDialog();
+            DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(myFigure[]), LoadedTypes);
 
             if (saveFileDialog1.FileName != "")
             {
@@ -329,6 +244,60 @@ namespace lab1._2
             }
         }
 
+        private string ParseJSONFile(string filename) 
+        {
+            FileStream file = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite);
+            StreamReader reader = new StreamReader(file);
+            string str = reader.ReadToEnd();
+            string mainString = "[";
+            string secString = "";
+            reader.Close();
+            file.Close();
+
+            int i = 0;
+            str = str.Remove(0, 1);
+            while (str.Length > 0) {
+                int k = str.IndexOf("type");
+                secString = secString + str.Substring(i, k + 7);//добавляем к строке все до типа
+                str = str.Remove(0, k + 7); // удаляем из старой все до типа
+                k = str.IndexOf(":");
+                String tempStr = str.Substring(0, k);//тип
+                bool isFigureInList = false;
+                var arr = LoadedTypes.ToList();
+                foreach (var type in arr) {
+                    if (type.ToString().Contains(tempStr)) {
+                        isFigureInList = true;
+                    }
+                }
+                if ((k = str.IndexOf("},{")) == -1)
+                {
+                    k = str.IndexOf("}]");
+                }
+                if (isFigureInList)
+                {
+                    //secString = secString + tempStr;//добавляем тип
+                    secString = secString + str.Substring(0, k + 2);//добавляем к строке все остальное
+                    str = str.Remove(0, k + 2);
+                }
+                else {
+                    secString = "";
+                    str = str.Remove(0, k + 2);
+                }
+                mainString = mainString + secString;
+                secString = "";
+            }
+            if (mainString.EndsWith(",")) {
+                mainString = mainString.Remove(mainString.Length - 1, 1);
+                mainString = mainString + "]";
+            }
+            return mainString;
+            //file = new FileStream(filename, FileMode.Truncate, FileAccess.Write);
+            //StreamWriter writer = new StreamWriter(file);
+            //writer.Write(mainString);
+            //writer.Close();
+            //file.Close();
+        }
+
         private void LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -336,14 +305,18 @@ namespace lab1._2
 
             if (openFileDialog1.ShowDialog() == true)
             {
+                string str = ParseJSONFile(openFileDialog1.FileName);
                 using (FileStream fs = new FileStream(openFileDialog1.FileName, FileMode.Open))
                 {
                     myFigure[] arr;
                     try
                     {
-                        arr = (myFigure[])jsonFormatter.ReadObject(fs);
+                        DataContractJsonSerializer jsonFormatter = new DataContractJsonSerializer(typeof(myFigure[]), LoadedTypes);
+                        MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(str));
+                        stream.Position = 0;
+                        arr = (myFigure[])jsonFormatter.ReadObject(stream);
                     }
-                    catch (Exception ex) {
+                    catch (Exception) {
                         System.Windows.MessageBox.Show("Файл неправильный!", "Error", MessageBoxButton.OK);
                         return;
                     }
@@ -362,21 +335,102 @@ namespace lab1._2
             }
         }
 
+        private string GetAssemblyName(string name)
+        {
+            return name.Substring(0, name.Length - 4);
+        }
+
         private void Window_Loaded_1(object sender, RoutedEventArgs e)
         {
-            Creators = new List<Creator>() {
-                new LineCreator(), 
-                new EllipseCreator(), 
-                new RectangleCreator(),
-                new SquareCreator(),
-                new TriangleCreator()
-            };
+            Creators = new List<Creator>() { };
+
+            try
+            {
+                var DllFiles = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+                foreach (string currentFile in DllFiles)
+                {
+                    string filename = System.IO.Path.GetFileName(currentFile);
+                    string path1 = String.Format("{0}/{1}", AppDomain.CurrentDomain.BaseDirectory, filename);
+                    string asmName = GetAssemblyName(System.IO.Path.GetFileName(path1));
+                    Assembly asm = Assembly.LoadFrom(path1);
+                    Type[] types = asm.GetTypes();
+                    Type figure = null;
+                    try
+                    {
+                        foreach (Type t in types)
+                        {
+                            if (t.BaseType.Equals(typeof(myFigure)))
+                            {
+                                figure = t;
+                            }
+                        }
+                        LoadedTypes.Add(figure);
+                    }
+                    catch {
+                    }
+
+                    Type type = Assembly.LoadFile(currentFile).GetExportedTypes()[0];
+                    try
+                    {
+                        Creators.Add(Activator.CreateInstance(type) as Creator);
+
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            System.Windows.Shapes.Path path = new System.Windows.Shapes.Path()
+                            {
+                                Stretch = Stretch.Uniform,
+                                Stroke = Brushes.Black,
+                                StrokeThickness = 2,
+                                Data = Geometry.Parse(type.GetField("PathData").GetValue(null) as string)
+                            };
+                            ToggleButton toggleButton = new ToggleButton()
+                            {
+                                Width = 25,
+                                Height = 25,
+                                Padding = new Thickness(3),
+                                Margin = new Thickness(0, 0, 0, 0),
+                                Content = path
+                            };
+                            toggleButton.Click += Button_Click;
+                            ToolBar.Children.Add(toggleButton);
+                        }));
+                    }
+                    catch {
+                    }
+                }
+
+                myFigure.KnownTypes = LoadedTypes;
+                FigureList.KnownTypes = LoadedTypes;
+            }
+            catch
+            {
+                System.Windows.MessageBox.Show("Какая-то ошибка с прочтением директории", "Error", MessageBoxButton.OK);
+            }
 
             PrimaryBitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight, 96, 96, PixelFormats.Default);
 
             FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
             fileSystemWatcher.Created += (x, y) =>
             {
+
+                string filename = System.IO.Path.GetFileName(y.FullPath);
+                string path2 = String.Format("{0}/{1}", AppDomain.CurrentDomain.BaseDirectory, filename);
+                string asmName = GetAssemblyName(System.IO.Path.GetFileName(path2));
+                Assembly asm = Assembly.LoadFrom(path2);
+                Type[] types = asm.GetTypes();
+                Type figure = null;
+
+                foreach (Type t in types)
+                {
+                    if (t.BaseType.Equals(typeof(myFigure)))
+                    {
+                        figure = t;
+                    }
+                }
+                LoadedTypes.Add(figure);
+                myFigure.KnownTypes = LoadedTypes;
+                FigureList.KnownTypes = LoadedTypes;
+
                 Type type = Assembly.LoadFile(y.FullPath).GetExportedTypes()[0];
                 Creators.Add(Activator.CreateInstance(type) as Creator);
                 this.Dispatcher.BeginInvoke(new Action(() =>
@@ -390,10 +444,10 @@ namespace lab1._2
                     };
                     ToggleButton toggleButton = new ToggleButton()
                     {
-                        Width = 32,
-                        Height = 32,
+                        Width = 25,
+                        Height = 25,
                         Padding = new Thickness(3),
-                        Margin = new Thickness(10, 0, 0, 0),
+                        Margin = new Thickness(0, 0, 0, 0),
                         Content = path
                     };
                     toggleButton.Click += Button_Click;
@@ -412,18 +466,29 @@ namespace lab1._2
             {
                 (uiElement as ToggleButton).IsChecked = uiElement == selectedToggleButton ? true : false;
             }
+            drawer = Creators[SelectedShapeId];
+
+            //убирает выделение со списка
+            for (int i = 0; i < list.count; i++)
+            {
+                list[i].isSelected = false;
+            }
+            //убирает рамку
+            if (selectedFigure != null)
+            {
+                canvas.Children.RemoveAt(canvas.Children.Count - 1);
+                selectedFigure = null;
+                lbShapes.SelectedIndex = -1;
+            }
         }
 
     }
 
     [DataContract]
-    [KnownType(typeof(myEllipse))]
-    [KnownType(typeof(myLine))]
-    [KnownType(typeof(myRectangle))]
-    [KnownType(typeof(mySquare))]
-    [KnownType(typeof(myTriangle))]
+    [KnownType("GetKnownTypes")]
     class FigureList
     {
+        public static List<Type> KnownTypes { get; set; }
         private static FigureList instance;
         [DataMember]
         protected  List<myFigure> figures = new List<myFigure>();
@@ -490,6 +555,11 @@ namespace lab1._2
             if (instance == null)
                 instance = new FigureList();
             return instance;
+        }
+
+        private static Type[] GetKnownTypes()
+        {
+            return FigureList.KnownTypes.ToArray();
         }
     }
 }

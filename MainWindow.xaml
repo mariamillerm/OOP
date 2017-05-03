@@ -23,7 +23,7 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <ListBox Name="colorsListBox" HorizontalAlignment="Center" Width="156" ItemTemplate="{StaticResource ColorTemplate}" SelectionChanged="OnNewColorSelected" SelectedIndex="1" Margin="739,23,0,452" BorderThickness="0" Panel.ZIndex="6">
+        <ListBox Name="colorsListBox" HorizontalAlignment="Center" Width="160" ItemTemplate="{StaticResource ColorTemplate}" SelectionChanged="OnNewColorSelected" SelectedIndex="1" Margin="735,23,0,449" BorderThickness="0" Panel.ZIndex="6">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel IsItemsHost="True" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollContentPresenter}}}"/>
@@ -52,9 +52,9 @@
         <Canvas x:Name="canvas" HorizontalAlignment="Left" Height="511" VerticalAlignment="Top" Width="730" RenderTransformOrigin="0.5,0.5" MouseMove="canvas_MouseMove" Background="Transparent" Margin="0,18,0,0" MouseLeftButtonDown="canvas_MouseLeftButtonDown"  Panel.ZIndex="0">
 
         </Canvas>
-        <Label x:Name="labelPos" Content="" HorizontalAlignment="Left" Margin="745,126,0,0" VerticalAlignment="Top" Width="146" Panel.ZIndex="6"/>
-        <ListBox x:Name="lbShapes" HorizontalAlignment="Left" Height="281" Margin="745,260,0,0" VerticalAlignment="Top" Width="136" SelectionChanged="lbShapes_SelectionChanged" Panel.ZIndex="6"/>
-        <Label Content="Список фигур:" HorizontalAlignment="Left" Height="24" Margin="745,231,0,0" VerticalAlignment="Top" Width="136" FontFamily="Segoe UI Historic" RenderTransformOrigin="0.493,0.458" Panel.ZIndex="6"/>
+        <Label x:Name="labelPos" Content="" HorizontalAlignment="Left" Margin="739,128,0,0" VerticalAlignment="Top" Width="146" Panel.ZIndex="6"/>
+        <ListBox x:Name="lbShapes" HorizontalAlignment="Left" Height="281" Margin="739,260,0,0" VerticalAlignment="Top" Width="142" SelectionChanged="lbShapes_SelectionChanged" Panel.ZIndex="6"/>
+        <Label Content="Список фигур:" HorizontalAlignment="Left" Height="24" Margin="739,231,0,0" VerticalAlignment="Top" Width="136" FontFamily="Segoe UI Historic" RenderTransformOrigin="0.493,0.458" Panel.ZIndex="6"/>
         <Menu x:Name="menu" HorizontalAlignment="Left" Height="18" VerticalAlignment="Top" Width="895" Panel.ZIndex="6">
             <MenuItem Header="Файл">
                 <MenuItem Header="Сохранить файл" Click="SaveFile_Click"/>
@@ -66,25 +66,31 @@
                 <MenuItem Header="Удалить все фигуры" Click="MenuDeleteAll_Click"/>
             </MenuItem>
         </Menu>
-        <StackPanel x:Name="ToolBar" Orientation="Horizontal">
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
+        <StackPanel x:Name="ToolBar" Orientation="Horizontal" Panel.ZIndex="6" Margin="735,-104,-735,104">
+            <!--Линия-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
                 <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,0 l 1,1"/>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
+            </ToggleButton>-->
+            <!--Круг-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
                 <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,1 A 10,10 0 1,1 0 2 z"/>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
+            </ToggleButton>-->
+            <!--Эллипс-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
                 <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,1 A 10,5 0 1,1 0 2 z"/>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
-                <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,0 h 1 v 1 h -1 z"/>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
+            </ToggleButton>-->
+            <!--Прямоугольник-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
                 <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,0 h 2 v 1 h -2 z"/>
-            </ToggleButton>
-            <ToggleButton Width="32" Height="32" Padding="3" IsChecked="True" Click="Button_Click">
+            </ToggleButton>-->
+            <!--Квадрат-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
+                <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,0 h 1 v 1 h -1 z"/>
+            </ToggleButton>-->
+            <!--Треугольник-->
+            <!--<ToggleButton Width="25" Height="25" Padding="3" IsChecked="True" Click="Button_Click">
                 <Path Stretch="Uniform" Stroke="Black" StrokeThickness="2" Data="M 0,0 h 1.5 v 2 z"/>
-            </ToggleButton>
+            </ToggleButton>-->
         </StackPanel>
     </Grid>
 </Window>
